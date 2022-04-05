@@ -1,0 +1,151 @@
+import fetch from "cross-fetch";
+import { Configuration, AccountsApi } from "@stacks/blockchain-api-client";
+
+(async () => {
+  const apiConfig = new Configuration({
+    fetchApi: fetch,
+    // for mainnet, replace `testnet` with `mainnet`
+    basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
+  });
+
+  // initiate the /accounts API with the basepath and fetch library
+  const accountsApi = new AccountsApi(apiConfig);
+
+  // get transactions for a specific account
+  const txs = await accountsApi.getAccountTransactions({
+    principal: "ST000000000000000000002AMW42H",
+  });
+
+  console.log(txs);
+})().catch(console.error);
+
+
+.......................
+
+
+import fetch from "cross-fetch";
+import {
+  Configuration,
+  AccountsApi,
+  AccountsApiInterface,
+  AddressBalanceResponse,
+  AddressBalanceResponseStx,
+} from "@stacks/blockchain-api-client";
+
+(async () => {
+  const apiConfig: Configuration = new Configuration({
+    fetchApi: fetch,
+    // for mainnet, replace `testnet` with `mainnet`
+    basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
+  });
+
+  const principal: string = "ST000000000000000000002AMW42H";
+
+  // initiate the /accounts API with the basepath and fetch library
+  const accountsApi: AccountsApiInterface = new AccountsApi(apiConfig);
+
+  // get balance for a specific account
+  const balance: AddressBalanceResponse = await accountsApi.getAccountBalance({
+    principal,
+  });
+
+  // get STX balance details
+  const stxAmount: AddressBalanceResponseStx = balance.stx;
+
+  console.log(stxAmount);
+})().catch(console.error);
+
+..................
+..................
+
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import Head from "next/head";
+import { StacksMocknet, StacksTestnet } from "@stacks/network";
+import {
+  standardPrincipalCV,
+  callReadOnlyFunction,
+} from "@stacks/transactions";
+
+export default function ApiCode() {
+  // Get info
+  // https://stacks-node-api.testnet.stacks.co/
+  // `http://localhost:3999/stacks-api/${assetAddress}.get-info`
+  // https://stacks-node-api.testnet.stacks.co/extended/v1/address/{principal}/balances
+  // `https://stacks-node-api.testnet.stacks.co/${assetAddress}.get-info`,
+  const getInfo = async (e) => {
+    var assetAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
+    const response = await fetch(
+      `https://stacks-node-api.testnet.stacks.co/extended/v1/address/ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9.get-info/stx`,
+      {
+        method: "GET",
+        mode: "no-cors",
+      }
+    );
+    const added = await response;
+    console.log("JSON: ", JSON.stringify(added));
+    //Router.push("/manager/users");
+  };
+
+  const getTheInfo = useCallback(async () => {
+    {
+      //Testnet
+      const userAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
+      // Devnet
+      //const userAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
+
+      const clarityAddress = standardPrincipalCV(
+        "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9"
+      );
+      const theContractAddress = standardPrincipalCV(
+        "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9"
+      );
+      const network = new StacksTestnet();
+      const options = {
+        contractAddress: theContractAddress,
+        contractName: "acat-nft",
+        functionName: "get-info",
+        network,
+        functionArgs: [theContractAddress],
+        senderAddress: userAddress,
+      };
+
+      const result = await callReadOnlyFunction(options);
+      console.log(result);
+    }
+  }, []);
+
+  /**
+  const fetchActivities = useCallback(async () => {
+    // fetch activities
+    const response = await accountsApi.getAccountTransactions({
+      principal: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+    });
+    console.log(response);
+  }, []);
+*/
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <Head>
+        <title>NFT API Code Tests</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
+        <div className="flex flex-col w-full items-center justify-center">
+          <h1 className="text-6xl font-bold mb-10">NFT API Code Tests</h1>
+          <p>
+            <Link href="/"> Home</Link>
+          </p>
+          <p>&nbsp;</p>
+          <button
+            className="bg-white-500 mb-6 rounded border-2 border-black py-2 px-4 font-bold hover:bg-gray-300"
+            onClick={() => getInfo()}
+          >
+            Get Info
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
