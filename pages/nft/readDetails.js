@@ -2,10 +2,19 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import fetch from "cross-fetch";
-import { Configuration, AccountsApi } from "@stacks/blockchain-api-client";
+import {
+  Configuration,
+  AccountsApi,
+  SmartContractsApi,
+  //parseReadOnlyResponse,
+  //CallReadOnlyFunctionRequest,
+} from "@stacks/blockchain-api-client";
+import { intCV, uintCV, cvToHex, deserializeCV } from "@stacks/transactions";
 
 export default function ApiCode() {
+  const [theUri, setTheUri] = useState("");
   const getInfo = async () => {
+    //const [theUri, setTheUri] = useState("");
     const apiConfig = new Configuration({
       fetchApi: fetch,
       // for mainnet, replace `testnet` with `mainnet`
@@ -14,15 +23,49 @@ export default function ApiCode() {
 
     // initiate the /accounts API with the basepath and fetch library
     const accountsApi = new AccountsApi(apiConfig);
+    const smartContractsApi = new SmartContractsApi(apiConfig);
 
     // get transactions for a specific account
     const txs = await accountsApi.getAccountAssets({
       //const txs = await accountsApi.getAccountTransactions({
       principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
     });
-
     console.log(txs);
+
+    //const ReadOnlyFunctionArgs
+    const tid = uintCV(1);
+    const turi = await smartContractsApi.callReadOnlyFunction({
+      contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      contractName: "acat-nft",
+      functionName: "get-token-uri",
+      //functionArgs: [tid],
+      //readOnlyFunctionArgs: [cvToHex(uintCV(1))],
+      //readOnlyFunctionArgs: [uintCV(1)],
+      readOnlyFunctionArgs: {
+        sender: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+        arguments: [cvToHex(uintCV(7))],
+      },
+    });
+    const resultCV = deserializeCV(turi.result);
+    console.log(JSON.stringify(resultCV));
+    //const myuri = JSON.stringify(resultCV.value);
+    setTheUri(resultCV.value.value.data);
+    console.log("Token URI:", resultCV.value.value.data);
+    //console.log(JSON.stringify(resultCV.value));
+    // You can parse the resultCV to get the result of the function call
+    //console.log(resultCV.data);
   };
+
+  // Get token uri
+  /**
+   export interface CallReadOnlyFunctionRequest {
+    contractAddress: string;
+    contractName: string;
+    functionName: string;
+    readOnlyFunctionArgs: ReadOnlyFunctionArgs;
+    tip?: string;
+} 
+   */
 
   // Get info
   // https://stacks-node-api.testnet.stacks.co/
@@ -49,6 +92,7 @@ export default function ApiCode() {
           >
             Get Info
           </button>
+          <h1>Token URI: {theUri}</h1>
         </div>
       </main>
     </div>
