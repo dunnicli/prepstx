@@ -4,10 +4,17 @@ authors = []
 description = ""
 telemetry = false
 requirements = []
-
 [contracts.acat-nft]
 path = "contracts/acat-nft.clar"
 depends_on = ["sip009-nft-trait"]
+
+[contracts.acat-v2-nft]
+path = "contracts/acat-v2-nft.clar"
+depends_on = []
+
+[contracts.maps]
+path = "contracts/maps.clar"
+depends_on = []
 
 [contracts.sip009-nft-trait]
 path = "contracts/sip009-nft-trait.clar"

@@ -149,3 +149,35 @@ export default function ApiCode() {
     </div>
   );
 }
+
+
+>>>>>>>>>>>>>>>>>>>>
+
+;; maps - This works!!
+;; Testing maps
+
+;; constants
+;;
+
+;; data maps and vars
+(define-map metaUri uint (string-ascii 255))
+;;(define-map messages principal (string-utf8 500))
+
+
+;; private functions
+;;
+(define-read-only (get-metaUri (token-id uint))
+    (map-get? metaUri token-id)
+)
+
+
+;; public functions
+;;
+
+(define-public (write-meta (token-id uint) (uri (string-ascii 255)))
+    (begin
+        (map-insert metaUri token-id uri)
+
+       (ok "URI written successfully")
+    )
+)
