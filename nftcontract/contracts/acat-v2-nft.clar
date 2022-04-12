@@ -1,4 +1,4 @@
-(impl-trait .sip009-nft-trait.sip009-nft-trait)
+;;(impl-trait 'ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9.sip009-nft-trait.sip009-nft-trait)
 
 (define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u100))

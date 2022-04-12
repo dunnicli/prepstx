@@ -14,6 +14,7 @@ import {
   makeStandardNonFungiblePostCondition,
   makeStandardSTXPostCondition,
   bufferCVFromString,
+  stringAsciiCV,
   standardPrincipalCV,
 } from "@stacks/transactions";
 import {
@@ -36,6 +37,7 @@ export default function Home() {
 
   // Set up the network and API
   const network = new StacksTestnet();
+  //const network = new StacksMocknet();
 
   // mint token
 
@@ -43,23 +45,27 @@ export default function Home() {
     e.preventDefault();
 
     //Testnet Contract
-    //const assetAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
+    const assetAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
     //Mocknet Contract
-    const assetAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
-
+    //const assetAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
+    //const buffer = bufferCVFromString("https://github.com/dunnicli/rrpvnftttt");
+    //const buffer = "https://github.com/dunnicli/rrpvnftttt";
+    const uri = stringAsciiCV("https://github.com/dunnicli/ice-cream");
     const functionArgs = [
       standardPrincipalCV(
         userSession.loadUserData().profile.stxAddress.testnet
       ),
-      bufferCVFromString("https://github.com/dunnicli/apvar"),
+      uri,
+      //buffer,
+      //bufferCVFromString("https://github.com/dunnicli/donuts"),
       // form input goes here...
     ];
     const postConditionAddress =
       userSession.loadUserData().profile.stxAddress.testnet;
     const nftPostConditionCode = NonFungibleConditionCode.Owns;
-    const assetContractName = "acat-v2-nft";
+    const assetContractName = "acat-v3-nft";
     const assetName = "acat";
-    const tokenAssetName = bufferCVFromString("acat");
+    const tokenAssetName = stringAsciiCV("acat");
     const nonFungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,
@@ -67,7 +73,7 @@ export default function Home() {
     );
 
     const stxConditionCode = FungibleConditionCode.LessEqual;
-    const stxConditionAmount = 50000000; // denoted in microstacks
+    const stxConditionAmount = 100000000; // denoted in microstacks
 
     const postConditions = [
       makeStandardNonFungiblePostCondition(
@@ -84,13 +90,13 @@ export default function Home() {
     ];
     const options = {
       contractAddress: assetAddress,
-      contractName: "acat-v2-nft",
+      contractName: "acat-v3-nft",
       functionName: "mint",
       functionArgs,
       network,
       postConditions,
       appDetails: {
-        name: "Acat V2",
+        name: "Acat V3",
         icon: "https://assets.website-files.com/618b0aafa4afde65f2fe38fe/618b0aafa4afde2ae1fe3a1f_icon-isotipo.svg",
       },
       onFinish: (data) => {
@@ -104,8 +110,8 @@ export default function Home() {
   function authenticate() {
     showConnect({
       appDetails: {
-        name: "Sup",
-        icon: "https://assets.website-files.com/618b0aafa4afde65f2fe38fe/618b0aafa4afde2ae1fe3a1f_icon-isotipo.svg",
+        name: "Acat V3",
+        icon: "",
       },
       redirectTo: "/",
       onFinish: () => {
@@ -129,12 +135,12 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>Create V2 NFT</title>
+        <title>Create V3 NFT</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
         <div className="flex flex-col w-full items-center justify-center">
-          <h1 className="text-6xl font-bold mb-10">Create V2 NFT</h1>
+          <h1 className="text-6xl font-bold mb-10">Create V3 NFT</h1>
           <p>
             <Link href="/"> Home</Link>
           </p>
@@ -158,7 +164,7 @@ export default function Home() {
                   type="submit"
                   className="p-6 bg-green-500 text-white mt-8 rounded"
                 >
-                  Create V2 NFT Now
+                  Create V3 NFT Now
                 </button>
               </form>
               <p>&nbsp;</p>

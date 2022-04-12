@@ -43,7 +43,7 @@ export default function SignIn() {
       setLoggedIn(true);
       setUserData(userSession.loadUserData());
     }
-  }, [userSession]);
+  }, []);
 
   return (
     <div className={styles.container}>

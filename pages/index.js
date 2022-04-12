@@ -17,8 +17,13 @@ export default function Home() {
         <Link href="/ingress"> Sign In.</Link>
         <p>&nbsp;</p>
         <p>
-          <Link href="/nft/createNftV2"> Create V2 NFT</Link>
+          <Link href="/nft/createNftV2"> Create V3 NFT</Link>
         </p>
+        <p>&nbsp;</p>
+        <p>
+          <Link href="/nft/apiV2read"> API V3 NFT</Link>
+        </p>
+        <p>&nbsp;</p>
         <p>&nbsp;</p>
         <p>
           <Link href="/nft/createNft"> Create NFT</Link>

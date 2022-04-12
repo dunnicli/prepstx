@@ -10,7 +10,11 @@ depends_on = ["sip009-nft-trait"]
 
 [contracts.acat-v2-nft]
 path = "contracts/acat-v2-nft.clar"
-depends_on = []
+depends_on = ["sip009-nft-trait"]
+
+[contracts.acatv4]
+path = "contracts/acatv4.clar"
+depends_on = ["sip009-nft-trait"]
 
 [contracts.maps]
 path = "contracts/maps.clar"
