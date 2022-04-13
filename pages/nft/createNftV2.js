@@ -34,6 +34,16 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
+  const [metadataUri, setMetadataUri] = useState("");
+  const [nftRecipient, setNftRecipient] = useState("");
+
+  const handleMetadataUriChange = (e) => {
+    setMetadataUri(e.target.value);
+  };
+
+  const handleNftRecipientChange = (e) => {
+    setNftRecipient(e.target.value);
+  };
 
   // Set up the network and API
   const network = new StacksTestnet();
@@ -43,21 +53,17 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const clarityRecipient = standardPrincipalCV(nftRecipient);
+    const clarityUri = stringAsciiCV(metadataUri);
     //Testnet Contract
     const assetAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
     //Mocknet Contract
     //const assetAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
-    //const buffer = bufferCVFromString("https://github.com/dunnicli/rrpvnftttt");
-    //const buffer = "https://github.com/dunnicli/rrpvnftttt";
-    const uri = stringAsciiCV("https://github.com/dunnicli/ice-cream");
+
+    //const uri = stringAsciiCV(metadataUri);
     const functionArgs = [
-      standardPrincipalCV(
-        userSession.loadUserData().profile.stxAddress.testnet
-      ),
-      uri,
-      //buffer,
-      //bufferCVFromString("https://github.com/dunnicli/donuts"),
+      clarityRecipient,
+      clarityUri,
       // form input goes here...
     ];
     const postConditionAddress =
@@ -150,14 +156,28 @@ export default function Home() {
             <>
               <form onSubmit={handleSubmit}>
                 <p>
-                  <p>&nbsp;</p>
-                  Token JSON URI
+                  Metadata URI
                   <br />
                   <input
                     className="p-6 border rounded mx-2"
                     type="text"
-                    value=""
-                  />{" "}
+                    value={metadataUri}
+                    onChange={handleMetadataUriChange}
+                    placeholder="Meta Data URI"
+                  />
+                </p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>
+                  NFT Recipient Address
+                  <br />
+                  <input
+                    className="p-6 border rounded mx-2"
+                    type="text"
+                    value={nftRecipient}
+                    onChange={handleNftRecipientChange}
+                    placeholder="Address - NFT Recipient"
+                  />
                 </p>
                 <p>&nbsp;</p>
                 <button
