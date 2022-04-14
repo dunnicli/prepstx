@@ -13,14 +13,55 @@ import {
   cvToHex,
   stringAsciiCV,
   deserializeCV,
+  cvToString,
+  hexToCV,
 } from "@stacks/transactions";
 
 export default function ApiCode() {
   const [theUri, setTheUri] = useState("");
-  const [theTid, setTheTid] = useState(0);
+  const [theTid, setTheTid] = useState();
+  const [theLatest, setTheLatest] = useState(0);
 
   const handleTheTidChange = (e) => {
     setTheTid(e.target.value);
+  };
+
+  const getLatest = async (e) => {
+    e.preventDefault();
+    const apiConfig = new Configuration({
+      fetchApi: fetch,
+      // for mainnet, replace `testnet` with `mainnet`
+      basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
+      //basePath: "http://localhost:3999",
+    });
+
+    // initiate the /accounts API with the basepath and fetch library
+    const accountsApi = new AccountsApi(apiConfig);
+    const smartContractsApi = new SmartContractsApi(apiConfig);
+
+    const txs = await accountsApi.getAccountAssets({
+      principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      //principal: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
+    });
+    console.log(txs);
+
+    const turi = await smartContractsApi.callReadOnlyFunction({
+      //const clarityTid = uintCV(tid);
+      contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      contractName: "acat-v3-nft",
+      functionName: "get-last-token-id",
+      readOnlyFunctionArgs: {
+        sender: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+        arguments: [],
+      },
+    });
+    //const resultCV = deserializeCV(turi.result);
+    //console.log(JSON.stringify(resultCV));
+    let cv = hexToCV(turi.result);
+    let cv2 = cvToString(cv);
+    setTheLatest(cv2);
+    //console.log("Last Token ID:", resultCV[0].asset.value.data);
+    console.log("Latest", cv2);
   };
 
   const getInfo = async (e) => {
@@ -79,6 +120,7 @@ export default function ApiCode() {
               <input
                 className="p-6 border rounded mx-2"
                 type="number"
+                required={true}
                 value={theTid}
                 onChange={handleTheTidChange}
                 placeholder="Token ID"
@@ -94,6 +136,15 @@ export default function ApiCode() {
           </form>
           <h1>Metadata URI: {theUri}</h1>
           <h1>Token ID: {theTid}</h1>
+          <p>&nbsp;</p>
+          <button
+            onClick={getLatest}
+            className="bg-white-500 mb-6 rounded border-2 border-black py-2 px-4 font-bold hover:bg-gray-300"
+          >
+            Get Last Token ID
+          </button>
+          <h1>Lastest Token ID: {theLatest}</h1>
+          <hr />
         </div>
       </main>
     </div>
