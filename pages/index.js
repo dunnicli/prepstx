@@ -17,6 +17,11 @@ export default function Home() {
         <Link href="/ingress"> Sign In.</Link>
         <p>&nbsp;</p>
         <p>
+          <Link href="/nft/ipfsCreateNft"> IPFS Create NFT</Link>
+        </p>
+
+        <p>&nbsp;</p>
+        <p>
           <Link href="/nft/createNftV2"> Create V3 NFT</Link>
         </p>
         <p>&nbsp;</p>
@@ -25,6 +30,7 @@ export default function Home() {
         </p>
         <p>&nbsp;</p>
         <p>&nbsp;</p>
+        <h1 className="text-2xl text-red-700">Old Links</h1>
         <p>
           <Link href="/nft/createNft"> Create NFT</Link>
         </p>
