@@ -21,6 +21,7 @@ export default function ApiCode() {
   const [theUri, setTheUri] = useState("");
   const [theTid, setTheTid] = useState();
   const [theLatest, setTheLatest] = useState(0);
+  const [theJson, setTheJson] = useState("");
 
   const handleTheTidChange = (e) => {
     setTheTid(e.target.value);
@@ -46,7 +47,6 @@ export default function ApiCode() {
     console.log(txs);
 
     const turi = await smartContractsApi.callReadOnlyFunction({
-      //const clarityTid = uintCV(tid);
       contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
       contractName: "acat-v3-nft",
       functionName: "get-last-token-id",
@@ -55,12 +55,9 @@ export default function ApiCode() {
         arguments: [],
       },
     });
-    //const resultCV = deserializeCV(turi.result);
-    //console.log(JSON.stringify(resultCV));
     let cv = hexToCV(turi.result);
     let cv2 = cvToString(cv);
     setTheLatest(cv2);
-    //console.log("Last Token ID:", resultCV[0].asset.value.data);
     console.log("Latest", cv2);
   };
 
@@ -85,7 +82,6 @@ export default function ApiCode() {
     console.log(txs);
 
     const turi = await smartContractsApi.callReadOnlyFunction({
-      //const clarityTid = uintCV(tid);
       contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
       contractName: "acat-v3-nft",
       functionName: "get-metaUri",
@@ -96,7 +92,15 @@ export default function ApiCode() {
     });
     const resultCV = deserializeCV(turi.result);
     console.log(JSON.stringify(resultCV));
+
+    const resultUrl = resultCV.value.data;
+    const response = await fetch(resultUrl);
+
+    if (!response.ok) throw new Error(response.statusText);
+
+    const json = await response.json();
     setTheUri(resultCV.value.data);
+    setTheJson(json);
     console.log("Meta URI:", resultCV.value.data);
   };
 
@@ -134,8 +138,34 @@ export default function ApiCode() {
               Get Info
             </button>
           </form>
-          <h1>Metadata URI: {theUri}</h1>
+          <h1>
+            Metadata URI:{" "}
+            <a href={`${theUri}`} target="_blank" rel="noopener noreferrer">
+              {theUri}
+            </a>
+          </h1>
+
           <h1>Token ID: {theTid}</h1>
+          <h1>Name: {theJson.name}</h1>
+          <h1>Description: {theJson.description}</h1>
+          <p>&nbsp;</p>
+          <div className="border shadow rounded-xl overflow-hidden">
+            <a
+              target="_blank"
+              href={`${theJson.image}`}
+              alt="Open image in a new tab"
+              title="Open image in a new tab"
+              rel="noopener noreferrer"
+            >
+              <img src={theJson.image} className="rounded" />
+            </a>
+            <div className="p-4 bg-black">
+              <p className="text-2xl font-bold text-white">
+                Description - {theJson.description}
+              </p>
+            </div>
+          </div>
+
           <p>&nbsp;</p>
           <button
             onClick={getLatest}
