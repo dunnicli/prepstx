@@ -17,6 +17,11 @@ export default function Home() {
         <Link href="/ingress"> Sign In.</Link>
         <p>&nbsp;</p>
         <p>
+          <Link href="/nft/addMinter">Add Approved Minter</Link>
+        </p>
+
+        <p>&nbsp;</p>
+        <p>
           <Link href="/nft/ipfsCreateNft"> IPFS Create NFT</Link>
         </p>
 

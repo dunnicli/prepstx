@@ -1,16 +1,18 @@
-;;(impl-trait .sip009-nft-trait.sip009-nft-trait)
 ;;(impl-trait 'ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9.sip009-nft-trait.sip009-nft-trait)
-;;(impl-trait 'ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS.sip009-nft-trait.sip009-nft-trait)
-;;(impl-trait .sip009-nft-trait.sip009-nft-trait)
 
 (define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u100))
 (define-constant err-not-token-owner (err u101))
+(define-constant err-not-approved (err u102))
+(define-constant err-invalid-caller (err u103))
+
 
 (define-data-var token-uri (string-ascii 246) "http://dunnicliffe.com")
 
-(define-map metaUri { tid: uint } { uri: (string-ascii 255) })
-;;(define-map metaUri uint (string-ascii 255))
+(define-map metaUri uint (string-ascii 255))
+
+;; allowed to create NFTs - recipient and # of NFTs to create
+(define-map approvedRecipients principal uint )
 
 (define-non-fungible-token acat uint)
 
@@ -20,24 +22,37 @@
     (ok (var-get last-token-id))
 )
 
-(define-read-only (get-metaUri (tid uint))
-    (map-get? metaUri (tuple (tid tid))) 
+(define-read-only (get-metaUri (token-id uint))
+    (map-get? metaUri token-id)
 )
 
-;;(define-map names-map { name: (string-ascii 10) } { id: int })
-;;(map-set names-map { name: "blockstack" } { id: 1337 })
-;;(map-get? names-map (tuple (name "blockstack"))) ;; Returns (some (tuple (id 1337)))
-;;(map-get? names-map { name: "blockstack" }) ;; Sam
-
-;;
-
-;;SIP-09: URI for metadata associated with the token
+;; SIP-09: URI for metadata associated with the token
 (define-read-only (get-token-uri (id uint))
     (ok (some (var-get token-uri)))
 )
 
 (define-read-only (get-owner (token-id uint))
     (ok (nft-get-owner? acat token-id))
+)
+
+(define-private (is-valid-caller)
+    (is-eq contract-owner tx-sender)
+)
+
+(define-public (add-recipient (recipient principal) (amount uint))
+    (begin
+        ;; Assert the tx-sender is valid.
+        (asserts! (is-valid-caller) err-invalid-caller)
+        (ok (map-set approvedRecipients recipient amount))
+    )
+)
+
+(define-public (delete-recipient (recipient principal))
+    (begin
+        ;; Assert the tx-sender is valid.
+        (asserts! (is-valid-caller) err-invalid-caller)
+        (ok (map-delete approvedRecipients recipient))
+    )
 )
 
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
@@ -47,13 +62,29 @@
     )
 )
 
-(define-public (mint (recipient principal))    
-  (let        (            
-               (token-id (+ (var-get last-token-id) u1)))
-        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
-        (try! (nft-mint? acat token-id recipient))        
-    (var-set last-token-id token-id)        
-    (ok token-id)))
+(define-public (mint (recipient principal) (uri (string-ascii 255)))
+    (let
+        (
+            (token-id (+ (var-get last-token-id) u1))
+        )    
+
+        (begin
+        (asserts! (is-some (map-get? approvedRecipients recipient)) err-not-approved)    
+        (try! (nft-mint? acat token-id recipient))
+        )
+       
+        (begin
+        (map-insert metaUri token-id uri )
+        (var-set last-token-id token-id)
+        )    
+        ;;(ok "URI written successfully")
+        (ok token-id)
+        
+    )    
+        
+        )
+      
+
 
 
 (define-public (set-token-uri (new-token-uri (string-ascii 246)))
