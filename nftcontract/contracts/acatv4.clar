@@ -12,11 +12,16 @@
 (define-map metaUri uint (string-ascii 255))
 
 ;; allowed to create NFTs - recipient and # of NFTs to create
-(define-map approvedRecipients principal uint )
+(define-map approvedMinters principal (string-ascii 255) )
 
 (define-non-fungible-token acat uint)
 
 (define-data-var last-token-id uint u0)
+
+(define-read-only (get-minter (minter principal))
+    (map-get? approvedMinters minter)
+)
+
 
 (define-read-only (get-last-token-id)
     (ok (var-get last-token-id))
@@ -39,19 +44,19 @@
     (is-eq contract-owner tx-sender)
 )
 
-(define-public (add-recipient (recipient principal) (amount uint))
+(define-public (add-minter (minter principal) (notes (string-ascii 255)))
     (begin
         ;; Assert the tx-sender is valid.
         (asserts! (is-valid-caller) err-invalid-caller)
-        (ok (map-set approvedRecipients recipient amount))
+        (ok (map-set approvedMinters minter notes))
     )
 )
 
-(define-public (delete-recipient (recipient principal))
+(define-public (delete-minter (minter principal))
     (begin
         ;; Assert the tx-sender is valid.
         (asserts! (is-valid-caller) err-invalid-caller)
-        (ok (map-delete approvedRecipients recipient))
+        (ok (map-delete approvedMinters minter))
     )
 )
 
@@ -69,7 +74,7 @@
         )    
 
         (begin
-        (asserts! (is-some (map-get? approvedRecipients recipient)) err-not-approved)    
+        (asserts! (is-some (map-get? approvedMinters recipient)) err-not-approved)    
         (try! (nft-mint? acat token-id recipient))
         )
        

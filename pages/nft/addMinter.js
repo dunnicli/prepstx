@@ -6,6 +6,7 @@ import {
   uintCV,
   standardPrincipalCV,
   makeStandardSTXPostCondition,
+  stringAsciiCV,
   cvToHex,
   deserializeCV,
 } from "@stacks/transactions";
@@ -14,8 +15,9 @@ import {
   UserSession,
   showConnect,
   openContractCall,
+  //AnchorMode,
 } from "@stacks/connect";
-import { StacksMocknet } from "@stacks/network";
+import { StacksMocknet, StacksTestnet } from "@stacks/network";
 
 export default function AddMinter() {
   const appConfig = new AppConfig(["publish_data"]);
@@ -25,56 +27,36 @@ export default function AddMinter() {
   const [userData, setUserData] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // Set up the network
-  const network = new StacksMocknet();
-  const formRef = useRef();
+  const [minter, setMinter] = useState("");
+  const [notes, setNotes] = useState("");
 
-  /**
-  const formRef = useRef();
-  //const [theUri, setTheUri] = useState("");
-  const { editMinter, editAmount } = formRef.current;
-  const minter = editMinter.value;
-  const amount = editAmount.value;
-
-  //
-  let formData = {
-    minter,
-    amount,
+  const handleMinterChange = (e) => {
+    setMinter(e.target.value);
   };
- */
+
+  const handleNotesChange = (e) => {
+    setNotes(e.target.value);
+  };
+
+  // Set up the network
+  const network = new StacksTestnet();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const [theUri, setTheUri] = useState("");
-    const { editMinter, editAmount } = formRef.current;
-    const minter = editMinter.value;
-    const amount = editAmount.value;
+    const clarityMinter = standardPrincipalCV(minter);
+    const clarityNotes = stringAsciiCV(notes);
+    const contractAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
 
-    //
-    let formData = {
-      minter,
-      amount,
-    };
-    const contractAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
-
-    const functionArgs = [
-      standardPrincipalCV(formData.minter),
-      uintCV(formData.amount),
-    ];
-
-    const postConditionAddress =
-      userSession.loadUserData().profile.stxAddress.testnet;
-    //const postConditionCode = FungibleConditionCode.LessEqual;
-    //const postConditionAmount = amount * 1000000;
-    const postConditions = [makeStandardSTXPostCondition(postConditionAddress)];
+    const functionArgs = [clarityMinter, clarityNotes];
 
     const options = {
       contractAddress: contractAddress,
       contractName: "acatv4",
-      functionName: "add-recipient",
+      functionName: "add-minter",
+      //anchorMode: AnchorMode.any, // must be included in a microblock
       functionArgs,
       network,
-      postConditions,
+      //postConditions,
       appDetails: {
         name: "acatv4",
         icon: window.location.origin + "/vercel.svg",
@@ -92,7 +74,7 @@ export default function AddMinter() {
   function authenticate() {
     showConnect({
       appDetails: {
-        name: "Acat V3",
+        name: "Acat V4",
         icon: "",
       },
       redirectTo: "/",
@@ -131,39 +113,36 @@ export default function AddMinter() {
           <p>&nbsp;</p>
           {loggedIn ? (
             <form
-              ref={formRef}
+              onSubmit={handleSubmit}
               className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
             >
               <p>
                 <b>Minter STX Address</b>
                 <br />
                 <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="p-6 border rounded mx-2"
                   type="text"
+                  value={minter}
+                  onChange={handleMinterChange}
                   placeholder="Minters STX Address"
-                  defaultValue=""
-                  name="editMinter"
-                  required
                 />
               </p>
               <p>&nbsp;</p>
               <p>
-                <b>Amount - i.e. 1</b>
+                <b>Notes</b>
                 <br />
                 <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="p-6 border rounded mx-2"
                   type="text"
-                  placeholder="Numerical Amount"
-                  name="editAmount"
-                  defaultValue=""
-                  required
+                  value={notes}
+                  onChange={handleNotesChange}
+                  placeholder="Notes here"
                 />
               </p>
               <p>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  disabled=""
-                  onClick={() => handleSubmit()}
+                  type="submit"
+                  className="p-6 bg-green-500 text-white mt-8 rounded"
                 >
                   Add New Minter
                 </button>

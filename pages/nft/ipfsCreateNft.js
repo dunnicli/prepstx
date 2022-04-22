@@ -122,7 +122,7 @@ export default function CreateItem() {
     const postConditionAddress =
       userSession.loadUserData().profile.stxAddress.testnet;
     const nftPostConditionCode = NonFungibleConditionCode.Owns;
-    const assetContractName = "acat-v3-nft";
+    const assetContractName = "acatv4";
     const assetName = "acat";
     const tokenAssetName = stringAsciiCV("acat");
     const nonFungibleAssetInfo = createAssetInfo(
@@ -149,13 +149,13 @@ export default function CreateItem() {
     ];
     const options = {
       contractAddress: assetAddress,
-      contractName: "acat-v3-nft",
+      contractName: "acatv4",
       functionName: "mint",
       functionArgs,
       network,
       postConditions,
       appDetails: {
-        name: "Acat V3",
+        name: "Acat V4",
         icon: "https://assets.website-files.com/618b0aafa4afde65f2fe38fe/618b0aafa4afde2ae1fe3a1f_icon-isotipo.svg",
       },
       onFinish: (data) => {
@@ -169,7 +169,7 @@ export default function CreateItem() {
   function authenticate() {
     showConnect({
       appDetails: {
-        name: "Acat V3",
+        name: "Acat V4",
         icon: "",
       },
       redirectTo: "/",

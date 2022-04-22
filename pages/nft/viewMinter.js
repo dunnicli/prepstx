@@ -12,6 +12,7 @@ import {
   uintCV,
   cvToHex,
   stringAsciiCV,
+  standardPrincipalCV,
   deserializeCV,
   cvToString,
   hexToCV,
@@ -22,9 +23,12 @@ export default function ApiCode() {
   const [theTid, setTheTid] = useState();
   const [theLatest, setTheLatest] = useState(0);
   const [theJson, setTheJson] = useState("");
+  const [theMinter, setTheMinter] = useState("");
+  const [thatJson, setThatJson] = useState("");
+  const [thatMinter, setThatMinter] = useState("");
 
-  const handleTheTidChange = (e) => {
-    setTheTid(e.target.value);
+  const handleTheMinterChange = (e) => {
+    setTheMinter(e.target.value);
   };
 
   const getLatest = async (e) => {
@@ -84,24 +88,24 @@ export default function ApiCode() {
     const turi = await smartContractsApi.callReadOnlyFunction({
       contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
       contractName: "acatv4",
-      functionName: "get-metaUri",
+      functionName: "get-minter",
       readOnlyFunctionArgs: {
         sender: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
-        arguments: [cvToHex(uintCV(theTid))],
+        arguments: [cvToHex(standardPrincipalCV(theMinter))],
       },
     });
     const resultCV = deserializeCV(turi.result);
     console.log(JSON.stringify(resultCV));
 
-    const resultUrl = resultCV.value.data;
-    const response = await fetch(resultUrl);
+    const resultMinter = resultCV.value.data;
+    //const response = await fetch(resultMinter);
 
-    if (!response.ok) throw new Error(response.statusText);
+    //if (!response.ok) throw new Error(response.statusText);
 
-    const json = await response.json();
-    setTheUri(resultCV.value.data);
-    setTheJson(json);
-    console.log("Meta URI:", resultCV.value.data);
+    //const json = await response.json();
+    setThatMinter(resultCV.value.data);
+    //setThatJson(json);
+    console.log("Minter:", resultCV.value.data);
   };
 
   return (
@@ -119,15 +123,15 @@ export default function ApiCode() {
           <p>&nbsp;</p>
           <form onSubmit={getInfo}>
             <p>
-              Token ID
+              Minter Address:
               <br />
               <input
                 className="p-6 border rounded mx-2"
-                type="number"
+                type="text"
                 required={true}
-                value={theTid}
-                onChange={handleTheTidChange}
-                placeholder="Token ID"
+                value={theMinter}
+                onChange={handleTheMinterChange}
+                placeholder="Minters Address"
               />
             </p>
             <p>&nbsp;</p>
@@ -135,45 +139,13 @@ export default function ApiCode() {
               type="submit"
               className="bg-white-500 mb-6 rounded border-2 border-black py-2 px-4 font-bold hover:bg-gray-300"
             >
-              Get Info
+              Get Minter
             </button>
           </form>
-          <h1>
-            Metadata URI:{" "}
-            <a href={`${theUri}`} target="_blank" rel="noopener noreferrer">
-              {theUri}
-            </a>
-          </h1>
-
-          <h1>Token ID: {theTid}</h1>
-          <h1>Name: {theJson.name}</h1>
-          <h1>Description: {theJson.description}</h1>
-          <p>&nbsp;</p>
-          <div className="border shadow rounded-xl overflow-hidden">
-            <a
-              target="_blank"
-              href={`${theJson.image}`}
-              alt="Open image in a new tab"
-              title="Open image in a new tab"
-              rel="noopener noreferrer"
-            >
-              <img src={theJson.image} className="rounded" />
-            </a>
-            <div className="p-4 bg-black">
-              <p className="text-2xl font-bold text-white">
-                Description - {theJson.description}
-              </p>
-            </div>
-          </div>
+          <h1>Minter: {thatMinter}</h1>
 
           <p>&nbsp;</p>
-          <button
-            onClick={getLatest}
-            className="bg-white-500 mb-6 rounded border-2 border-black py-2 px-4 font-bold hover:bg-gray-300"
-          >
-            Get Last Token ID
-          </button>
-          <h1>Lastest Token ID: {theLatest}</h1>
+
           <hr />
         </div>
       </main>
