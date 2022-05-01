@@ -45,7 +45,8 @@ export default function AddMinter() {
     e.preventDefault();
     const clarityMinter = standardPrincipalCV(minter);
     const clarityNotes = stringAsciiCV(notes);
-    const contractAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
+    //const contractAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
+    const contractAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
 
     const functionArgs = [clarityMinter, clarityNotes];
 

@@ -27,6 +27,11 @@ export default function Home() {
 
         <p>&nbsp;</p>
         <p>
+          <Link href="/nft/justMint">Just Mint</Link>
+        </p>
+
+        <p>&nbsp;</p>
+        <p>
           <Link href="/nft/ipfsCreateNft"> IPFS Create NFT</Link>
         </p>
 

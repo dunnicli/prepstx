@@ -34,3 +34,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+notes.txt
+noteipfs.txt
+notes-api.txt
+notesAcatv4.txt
+
