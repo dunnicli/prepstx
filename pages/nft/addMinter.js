@@ -2,20 +2,16 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import {
-  intCV,
-  uintCV,
   standardPrincipalCV,
   makeStandardSTXPostCondition,
   stringAsciiCV,
-  cvToHex,
-  deserializeCV,
+  FungibleConditionCode,
 } from "@stacks/transactions";
 import {
   AppConfig,
   UserSession,
   showConnect,
   openContractCall,
-  //AnchorMode,
 } from "@stacks/connect";
 import { StacksMocknet, StacksTestnet } from "@stacks/network";
 
@@ -38,8 +34,7 @@ export default function AddMinter() {
     setNotes(e.target.value);
   };
 
-  // Set up the network
-  const network = new StacksTestnet();
+  const network = new StacksMocknet();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,16 +43,27 @@ export default function AddMinter() {
     //const contractAddress = "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9";
     const contractAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
 
+    const postConditionAddress =
+      userSession.loadUserData().profile.stxAddress.testnet;
+    const stxConditionCode = FungibleConditionCode.LessEqual;
+    const stxConditionAmount = 100000000; // denoted in microstacks
+
+    const postConditions = [
+      makeStandardSTXPostCondition(
+        postConditionAddress,
+        stxConditionCode,
+        stxConditionAmount
+      ),
+    ];
     const functionArgs = [clarityMinter, clarityNotes];
 
     const options = {
       contractAddress: contractAddress,
       contractName: "acatv4",
       functionName: "add-minter",
-      //anchorMode: AnchorMode.any, // must be included in a microblock
       functionArgs,
       network,
-      //postConditions,
+      postConditions,
       appDetails: {
         name: "acatv4",
         icon: window.location.origin + "/vercel.svg",
@@ -96,8 +102,6 @@ export default function AddMinter() {
       setUserData(userSession.loadUserData());
     }
   }, []);
-
-  // Get token uri
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">

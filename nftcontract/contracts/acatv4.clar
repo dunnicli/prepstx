@@ -74,6 +74,7 @@
         )    
 
         (begin
+        ;;(asserts! (is-eq tx-sender contract-owner) err-owner-only)
         (asserts! (is-some (map-get? approvedMinters recipient)) err-not-approved)    
         (try! (nft-mint? acat token-id recipient))
         )

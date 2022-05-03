@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 //import { create } from "ipfs-http-client";
-import { useRouter } from "next/router";
 import Link from "next/link";
-//import Router from "next/router";
-//import { toast, ToastContainer } from "react-nextjs-toast";
 import Head from "next/head";
 import {
   AppConfig,
@@ -19,15 +16,12 @@ import {
   createAssetInfo,
   makeStandardNonFungiblePostCondition,
   makeStandardSTXPostCondition,
-  bufferCVFromString,
   stringAsciiCV,
   standardPrincipalCV,
 } from "@stacks/transactions";
-//import useInterval from "@use-it/interval";
 import { StacksMocknet, StacksTestnet } from "@stacks/network";
 
 export default function CreateItem() {
-  //const router = useRouter();
   const appConfig = new AppConfig(["publish_data"]);
   const userSession = new UserSession({ appConfig });
   const [error, setError] = useState("");
@@ -37,16 +31,12 @@ export default function CreateItem() {
   const [nftRecipient, setNftRecipient] = useState("");
   const [url, setUrl] = useState("");
 
-  // Set up the network and API
-  //const network = new StacksTestnet();
   const network = new StacksMocknet();
 
   const [formInput, updateFormInput] = useState({
     recipient: "",
     theUrl: "",
   });
-
-  //createStxSale;
 
   async function createNft() {
     setNftRecipient(formInput.recipient);
@@ -59,12 +49,7 @@ export default function CreateItem() {
     //Mocknet Contract
     const assetAddress = "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS";
 
-    //const uri = stringAsciiCV(metadataUri);
-    const functionArgs = [
-      clarityRecipient,
-      clarityUri,
-      // form input goes here...
-    ];
+    const functionArgs = [clarityRecipient, clarityUri];
     const postConditionAddress =
       userSession.loadUserData().profile.stxAddress.testnet;
     const nftPostConditionCode = NonFungibleConditionCode.Owns;
@@ -136,8 +121,6 @@ export default function CreateItem() {
       setUserData(userSession.loadUserData());
     }
   }, []);
-
-  // End of create the item
 
   return (
     <div className="flex p-4">

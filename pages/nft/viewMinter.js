@@ -36,8 +36,8 @@ export default function ApiCode() {
     const apiConfig = new Configuration({
       fetchApi: fetch,
       // for mainnet, replace `testnet` with `mainnet`
-      basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
-      //basePath: "http://localhost:3999",
+      //basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
+      basePath: "http://localhost:3999",
     });
 
     // initiate the /accounts API with the basepath and fetch library
@@ -45,17 +45,17 @@ export default function ApiCode() {
     const smartContractsApi = new SmartContractsApi(apiConfig);
 
     const txs = await accountsApi.getAccountAssets({
-      principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
-      //principal: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
+      //principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      principal: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
     });
     console.log(txs);
 
     const turi = await smartContractsApi.callReadOnlyFunction({
-      contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      contractAddress: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
       contractName: "acatv4",
       functionName: "get-last-token-id",
       readOnlyFunctionArgs: {
-        sender: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+        sender: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
         arguments: [],
       },
     });
@@ -70,8 +70,8 @@ export default function ApiCode() {
     const apiConfig = new Configuration({
       fetchApi: fetch,
       // for mainnet, replace `testnet` with `mainnet`
-      basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
-      //basePath: "http://localhost:3999",
+      //basePath: "https://stacks-node-api.testnet.stacks.co", // defaults to http://localhost:3999
+      basePath: "http://localhost:3999",
     });
 
     // initiate the /accounts API with the basepath and fetch library
@@ -80,17 +80,17 @@ export default function ApiCode() {
 
     // get transactions for a specific account
     const txs = await accountsApi.getAccountAssets({
-      principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
-      //principal: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
+      //principal: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      principal: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
     });
     console.log(txs);
 
     const turi = await smartContractsApi.callReadOnlyFunction({
-      contractAddress: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+      contractAddress: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
       contractName: "acatv4",
       functionName: "get-minter",
       readOnlyFunctionArgs: {
-        sender: "ST12H4ANQQ2NGN96KB0ZYVDG02NWT99A9TPE22SP9",
+        sender: "ST3H0F71SQXP2APJX29HBQN4FAZP5H0W564KD9ZDS",
         arguments: [cvToHex(standardPrincipalCV(theMinter))],
       },
     });
