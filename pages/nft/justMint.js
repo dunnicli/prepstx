@@ -30,6 +30,7 @@ export default function CreateItem() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [nftRecipient, setNftRecipient] = useState("");
   const [url, setUrl] = useState("");
+  const [txId, setTxId] = useState("");
 
   const network = new StacksMocknet();
 
@@ -91,6 +92,7 @@ export default function CreateItem() {
       },
       onFinish: (data) => {
         console.log(data);
+        setTxId(data.txId);
       },
     };
 
@@ -169,6 +171,9 @@ export default function CreateItem() {
             Connect to Wallet
           </button>
         )}
+
+        <p>&nbsp;</p>
+        <h1>TXID: {txId}</h1>
       </div>
     </div>
   );
