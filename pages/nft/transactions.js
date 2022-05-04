@@ -5,7 +5,7 @@ import fetch from "cross-fetch";
 import { cvToString, hexToCV } from "@stacks/transactions";
 
 export default function TransCode() {
-  const [theTxId, setTheTxId] = useState();
+  const [theTxId, setTheTxId] = useState("");
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("");
@@ -18,28 +18,37 @@ export default function TransCode() {
   const getTransInfo = async (e) => {
     e.preventDefault();
 
-    const tx = await fetch(`http://localhost:3999/extended/v1/tx/${theTxId}`)
+    const response = await fetch(
+      `http://localhost:3999/extended/v1/tx/${theTxId}`
+    )
       .then((response) => response.json())
       .then((actualData) => {
+        if (!response.ok) {
+          const message = `An error occurred: ${response.statusText}`;
+          window.alert(message);
+          return;
+        }
+
+        console.log("Status before setData: ", actualData.tx_status);
         setData(actualData);
         //setError(null);
-        let stuff = data.tx_status;
-        console.log("Token ID:", data.tx_result.repr);
-        let tid = data.tx_result.repr;
-        let subtid = tid.slice(3, -1);
+        //const stuff = actualData.tx_status;
+        console.log("Token ID:", actualData.tx_result.repr);
+        const tid = actualData.tx_result.repr;
+        const subtid = tid.slice(4, -1);
         const mystring = subtid.replace("u", "");
         setTokenId(mystring);
-        setStatus(stuff);
+        setStatus(actualData.tx_status);
         console.log("TID:", mystring); // 45
-        console.log("Status:", stuff);
-        console.log("Details:", data);
+        console.log("Status:", status);
+        console.log("Details:", actualData);
       });
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>** Transactions **</title>
+        <title>Transactions</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">

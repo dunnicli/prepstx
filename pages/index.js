@@ -16,6 +16,12 @@ export default function Home() {
         <h1 className="text-4xl font-black">STX Prep</h1>
         <Link href="/ingress"> Sign In.</Link>
         <p>&nbsp;</p>
+
+        <p>
+          <Link href="/nft/transactions">Transactions</Link>
+        </p>
+        <p>&nbsp;</p>
+
         <p>
           <Link href="/nft/addMinter">Add Approved Minter</Link>
         </p>
