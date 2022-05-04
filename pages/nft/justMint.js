@@ -174,6 +174,10 @@ export default function CreateItem() {
 
         <p>&nbsp;</p>
         <h1>TXID: {txId}</h1>
+        <p>&nbsp;</p>
+        <Link href="/nft/transactions">Transactions!</Link>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
       </div>
     </div>
   );
